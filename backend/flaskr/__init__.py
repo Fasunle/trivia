@@ -7,11 +7,13 @@ import random
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
+SQLALCHEMY_DATABASE_URI = "postgresql://Fasunle@localhost:5432/trivia"
+
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
-    setup_db(app)
+    setup_db(app, SQLALCHEMY_DATABASE_URI)
 
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
@@ -26,7 +28,6 @@ def create_app(test_config=None):
     Create an endpoint to handle GET requests
     for all available categories.
     """
-
 
     """
     @TODO:
@@ -99,4 +100,3 @@ def create_app(test_config=None):
     """
 
     return app
-
