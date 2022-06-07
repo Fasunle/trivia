@@ -31,5 +31,32 @@ def fetch_questions():
         "total_questions": questions.total
     }
     """
+    # get page number
+    page_number = request.args.get("page", 1, int)
 
-    pass
+    # flask_sqlalchemy.BaseQuery.paginate
+    # https: // flask-sqlalchemy.palletsprojects.com/en/2.x/api /?highlight = basequery
+    # paginate returns a generator
+    questions = Question.query.paginate(
+        page_number,
+        QUESTIONS_PER_PAGE,
+        ERROR_OUT,
+        MAX_QUESTIONS_PER_PAGE
+    )
+    categories = Category.query.all()
+    format_categories = {
+        str(Category.format(category)['id']): Category.format(category)['type']
+        for category in categories
+    }
+
+    formatted_questions = [
+        Question.format(question)
+        for question in questions.items
+    ]
+
+    return jsonify({
+        "questions": formatted_questions,
+        "current_category": 2,
+        "categories": format_categories,
+        "total_questions": questions.total
+    })
