@@ -1,3 +1,4 @@
+import json
 from flask import (
     request,
     jsonify
@@ -83,3 +84,20 @@ def delete_question(id):
         Question.delete(question)
 
     return jsonify(f"Question with id: {id} was deleted")
+
+
+@question_controller.route('/', methods=["POST"])
+def create_question():
+    """Create question
+
+    Returns:
+        string: Success message
+    """
+    # convert byte to dict
+    # https://docs.python.org/3/library/json.html
+    data = json.loads(request.data)
+    question = Question(data['question'], data['answer'],
+                        data['category'], data['difficulty'])
+
+    Question.insert(question)   # create the question
+    return jsonify("Question created successfully!")
