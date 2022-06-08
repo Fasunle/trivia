@@ -33,6 +33,7 @@ def fetch_questions():
     """
     # get page number
     page_number = request.args.get("page", 1, int)
+    current_category = request.args.get("current_category", 1, int)
 
     # flask_sqlalchemy.BaseQuery.paginate
     # https: // flask-sqlalchemy.palletsprojects.com/en/2.x/api /?highlight = basequery
@@ -56,7 +57,7 @@ def fetch_questions():
 
     return jsonify({
         "questions": formatted_questions,
-        "current_category": 2,
+        "current_category": current_category,
         "categories": format_categories,
         "total_questions": questions.total
     })
