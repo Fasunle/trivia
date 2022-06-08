@@ -61,3 +61,25 @@ def fetch_questions():
         "categories": format_categories,
         "total_questions": questions.total
     })
+
+
+@question_controller.route('/<int:id>', methods=["DELETE"])
+def delete_question(id):
+    """Given a question id, delete the question
+
+    Args:
+        id (int): unique identifier of the question
+
+    Returns:
+        string: id of the deleted question if the deletion was successful.
+        Otherwise, failure message is returned
+    """
+    # fetch a question with the id
+    question = Question.query.get(id)
+    # handle when the wrong id is passed
+    if question == None:
+        return f"Question with id: {id} was not found"
+    else:
+        Question.delete(question)
+
+    return jsonify(f"Question with id: {id} was deleted")
