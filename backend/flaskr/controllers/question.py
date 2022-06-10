@@ -17,7 +17,7 @@ from models import (
 )
 
 
-@question_controller.route('/')
+@question_controller.route('/questions')
 def fetch_questions():
     """Fetch Questions from the database and automatically paginate them.
 
@@ -65,7 +65,7 @@ def fetch_questions():
     })
 
 
-@question_controller.route('/<int:id>', methods=["DELETE"])
+@question_controller.route('/questions/<int:id>', methods=["DELETE"])
 def delete_question(id):
     """Given a question id, delete the question
 
@@ -87,7 +87,7 @@ def delete_question(id):
     return jsonify(f"Question with id: {id} was deleted")
 
 
-@question_controller.route('/', methods=["POST"])
+@question_controller.route('/questions', methods=["POST"])
 def create_question():
     """Create a question or search for a question
 
