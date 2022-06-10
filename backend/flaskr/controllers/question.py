@@ -1,4 +1,5 @@
 import json
+from unicodedata import category
 from flask import (
     request,
     jsonify
@@ -88,7 +89,7 @@ def delete_question(id):
 
 @question_controller.route('/', methods=["POST"])
 def create_question():
-    """Create question
+    """Create a question or search for a question
 
     Returns:
         string: Success message
@@ -96,8 +97,57 @@ def create_question():
     # convert byte to dict
     # https://docs.python.org/3/library/json.html
     data = json.loads(request.data)
+
+    # SEARCH QUESTIONS
+    search_term = data.get("searchTerm")
+    current_category = request.args.get("current_category")
+
+    if search_term:
+        print(current_category)
+        return search_question(search_term, current_category)
+
+    # CREATE NEW QUESTIONS
+
     question = Question(data['question'], data['answer'],
                         data['category'], data['difficulty'])
 
     Question.insert(question)   # create the question
     return jsonify("Question created successfully!")
+
+
+def search_question(search_term, current_category):
+    # get the category
+    category = Category.query.filter_by(
+        type=current_category
+    ).first()
+
+    # return empty if the category is not found
+    if category is None:
+        return jsonify({
+            "questions": [],
+            "current_category": current_category,
+            "total_questions": 0
+        })
+
+    # if category is not None, then get the id
+    category_id = category.id
+
+    questions_like = Question.question.like(f"%{search_term}%")
+    questions = Question.query.filter(
+        questions_like
+    ).filter_by(
+        category=category_id
+    ).all()
+
+    questions_formatted = [
+        Question.format(question)
+        for question in questions
+    ]
+
+    result = {
+        "questions": questions_formatted,
+        "current_category": current_category,
+        "total_questions": len(questions_formatted)
+    }
+
+    return jsonify(result)
