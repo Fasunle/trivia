@@ -5,7 +5,7 @@ from models import Category
 from models import Question
 
 
-@categories_controller.route('/')
+@categories_controller.route('/categories')
 def fecth_categories():
     """Fetch all categories
 
@@ -19,7 +19,7 @@ def fecth_categories():
     }
 
 
-@categories_controller.route('/<int:id>/questions')
+@categories_controller.route('/categories/<int:id>/questions')
 def get_by_category(id):
     """Get all questions given a category id
 
