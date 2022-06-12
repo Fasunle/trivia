@@ -14,8 +14,10 @@ def fecth_categories():
     """
     all_categories = Category.query.all()
     return {
-        Category.format(category)['id']:  Category.format(category)['type']
-        for category in all_categories
+        "categories": {
+            Category.format(category)['id']:  Category.format(category)['type']
+            for category in all_categories
+        }
     }
 
 
