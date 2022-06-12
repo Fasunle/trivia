@@ -73,6 +73,7 @@ class QuizView extends Component {
       },
       error: (error) => {
         alert("Unable to load question. Please try your request again");
+        window.location = "/play"; // reload page if error occured
         return;
       },
     });
@@ -104,7 +105,9 @@ class QuizView extends Component {
       <div className="quiz-play-holder">
         <div className="choose-header">Choose Category</div>
         <div className="category-holder">
-          <div className="play-category" onClick={this.selectCategory}>
+          <div
+            className="play-category"
+            onClick={() => this.selectCategory({ type: "ALL" })}>
             ALL
           </div>
           {Object.keys(this.state.categories).map((id) => {
