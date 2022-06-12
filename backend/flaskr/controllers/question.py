@@ -1,5 +1,4 @@
 import json
-from unicodedata import category
 from flask import (
     request,
     jsonify
@@ -10,7 +9,10 @@ from config import (
     ERROR_OUT,
     MAX_QUESTIONS_PER_PAGE
 )
-from flaskr.controllers import question_controller
+from flaskr.controllers import (
+    get_random_integer,
+    question_controller
+)
 from models import (
     Category,
     Question
@@ -151,3 +153,45 @@ def search_question(search_term, current_category):
     }
 
     return jsonify(result)
+
+
+@question_controller.route("/quizzes", methods=["POST"])
+def quizzes():
+    """Generate a random question and when the questions list is exhusted, it would restart
+
+    Returns:
+        json: question object
+    """
+    data = json.loads(request.data)
+
+    category_id = data["quiz_category"]["id"]
+    category_type = data["quiz_category"]["type"]
+    previous_question_ids = data["previous_questions"]
+
+    # get the questions by category
+    questions_by_category = []
+
+    if category_id == 0 and category_type == "ALL":
+        questions_by_category = Question.query.all()
+    else:
+        questions_by_category = Question.query.filter(
+            Question.category == category_id).all()
+
+    # filter off the previous questions
+    questions = list(
+        filter(lambda x: x.id not in previous_question_ids,
+               questions_by_category or [])
+    )
+
+    # generate random integer =<  len(questions)
+    if len(questions) != 0:
+        random_question_index = get_random_integer(len(questions))
+        random_question = Question.format(questions[random_question_index])
+
+    # if the category does not contain any question
+    else:
+        return "This category does not have any question."
+
+    return jsonify({
+        "question": random_question
+    })
