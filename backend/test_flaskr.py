@@ -1,8 +1,10 @@
 import os
 import unittest
 import json
+from flask import request
 from flask_sqlalchemy import SQLAlchemy
 
+from flaskr.controllers.question import fetch_questions
 from flaskr.controllers.category import (fecth_categories, get_by_category)
 
 from flaskr import create_app
@@ -141,6 +143,20 @@ class TriviaTestCase(unittest.TestCase):
             geography_category["questions"], expected_geography_result["questions"])
         self.assertEqual(
             geography_category["total_questions"], expected_geography_result["total_questions"])
+
+    def test_fetch_questions(self):
+        """Get all questions and test that correct keys are returned for a given page
+        """
+        expected_keys = ["categories", "current_category",
+                         "questions", "total_questions"]
+
+        with self.app.test_request_context("/api/questions?page=1"):
+            questions = json.loads(fetch_questions().data)
+            page_count = int(request.args.get('page'))
+            result_keys = list(questions.keys())
+
+        self.assertListEqual(result_keys, expected_keys)
+        self.assertEqual(1, page_count)
 
 
 # Make the tests conveniently executable
