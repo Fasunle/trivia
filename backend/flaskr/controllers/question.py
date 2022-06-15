@@ -82,7 +82,7 @@ def delete_question(id):
     question = Question.query.get(id)
     # handle when the wrong id is passed
     if question == None:
-        return f"Question with id: {id} was not found"
+        return f"Question with id: {id} was not found", 404
     else:
         Question.delete(question)
 
