@@ -1,16 +1,10 @@
-import os
-from typing import Literal
 import unittest
 import json
-from urllib import response
-from flask import (request, jsonify)
 from flask_sqlalchemy import SQLAlchemy
 
-from flaskr.controllers.question import fetch_questions
-from flaskr.controllers.category import (fecth_categories, get_by_category)
 
 from flaskr import create_app
-from models import setup_db, Question, Category
+from models import (setup_db, Question, Category)
 
 
 class TriviaTestCase(unittest.TestCase):
@@ -42,31 +36,30 @@ class TriviaTestCase(unittest.TestCase):
     """
 
     def test_fetch_categories(self):
+        """Fetch all categories
+        
+        test: 
+            - status code 200 OK
+            - expected dictionary
+        """
 
-        categories = fecth_categories()
+        response = self.client.get("/api/categories")
+        categories = json.loads(response.data)
 
-        expected_categories_1 = {
-            "categories": {
-                1: "Science",
-                2: "Art",
-                3: "Geography",
-                4: "History",
-                5: "Entertainment",
-                6: "Sports"
-            }
-        }
-        expected_categories_2 = {
-            "categories": {
-                1: "Science",
-                2: "Art",
-                3: "Geography",
-                4: "History",
-                5: "Entertainment"
-            }
-        }
+        expected = {
+                    'categories': {
+                        '1': 'Science',
+                        '2': 'Art',
+                        '3': 'Geography',
+                        '4': 'History',
+                        '5': 'Entertainment',
+                        '6': 'Sports'
+                        }
+                    }
 
-        self.assertEqual(categories, expected_categories_1)
-        self.assertNotEqual(categories, expected_categories_2)
+        self.assertEqual(response.status_code, 200)
+        self.assertDictEqual(categories, expected)
+        self.assertListEqual(list(categories.keys()), ["categories"])
 
     def test_get_by_category(self):
         """Get questions by category
@@ -98,8 +91,10 @@ class TriviaTestCase(unittest.TestCase):
         """
         
         response = self.client.get("/api/categories/questions")
+        res_data = json.loads(response.data)
         
-        self.assertEqual(response.data, 200)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(res_data["message"], "resource not found")
 
     def test_fetch_questions(self):
         """Get all questions and test that correct keys are returned for a given page
@@ -138,20 +133,33 @@ class TriviaTestCase(unittest.TestCase):
         self.assertNotIsInstance(questions["questions"], tuple)
 
 
-    def test_delete_question_if_found(self):
+    def test_delete_question(self):
         """Delete a question with a particular Id
         """
-        mock_id = 26
+        question_raw= Question.query.first()
+        question = Question.format(question_raw)
+        mock_id = question['id']
 
         # delete a question
         response = self.client.delete(f"/api/questions/{mock_id}")
         # if successful, return 200 OK status code
         self.assertEqual(response.status_code, 200)
         
+        
+        # after deletion, fetch it again
+        question_raw= Question.query.filter_by(id=mock_id).one_or_none()
+        self.assertIsNone(question_raw)
+        
+        
     def test_delete_question_if_not_found(self):
         """Delete a question with a particular Id
         """
-        mock_id = 23
+        question_raw= Question.query.first()
+        question = Question.format(question_raw)
+        mock_id = question['id']
+        
+        # delete the question
+        self.client.delete(f"/api/questions/{mock_id}")
 
         # delete question that is already deleted
         response = self.client.delete(f"/api/questions/{mock_id}")
@@ -238,16 +246,16 @@ class TriviaTestCase(unittest.TestCase):
     def test_quizzes(self):
         """If proper request object is specified, return a question object
         """
-        
+        question = Question.query.first()
+        category = Category.query.filter_by(id=question.category).first()
         payload = {
             "previous_questions": [],
             "quiz_category": {
-                "id": 1,
-                "type": "Science"
+                "id": category.id,
+                "type": category.type
             }
         }
         response = self.client.post('/api/quizzes', data=json.dumps(payload))
-        
         result = json.loads(response.data)
         
         self.assertEqual(response.status_code, 200)
