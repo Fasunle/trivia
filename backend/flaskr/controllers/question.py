@@ -1,5 +1,6 @@
 import json
 from flask import (
+    abort,
     request,
     jsonify
 )
@@ -104,42 +105,59 @@ def create_question():
     search_term = data.get("searchTerm")
     current_category = request.args.get("current_category")
 
+    # CREATE NEW QUESTIONS
+    question = data.get('question')
+    difficulty = data.get('difficulty')
+    category = data.get('category')
+    answer = data.get('answer')
+    
     if search_term:
-        print(current_category)
         return search_question(search_term, current_category)
 
-    # CREATE NEW QUESTIONS
+    
+    elif question != None and answer != None and category != None and difficulty != None:
 
-    question = Question(data['question'], data['answer'],
-                        data['category'], data['difficulty'])
+        _question = Question(
+                question, 
+                answer,
+                category, 
+                difficulty
+            )
 
-    Question.insert(question)   # create the question
-    return jsonify("Question created successfully!")
+        Question.insert(_question)   # create the question
+        return jsonify("Question created successfully!")
+    
+    return "request object must have the following fields: question, answer, category, difficulty", 400
 
 
 def search_question(search_term, current_category):
     # get the category
-    category = Category.query.filter_by(
-        type=current_category
-    ).first()
-
+    # category = Category.query.get(current_category)
+    
     # return empty if the category is not found
-    if category is None:
+    if search_term is None:
         return jsonify({
             "questions": [],
             "current_category": current_category,
             "total_questions": 0
         })
 
-    # if category is not None, then get the id
-    category_id = category.id
-
+    # category_id = category.id
     questions_like = Question.question.like(f"%{search_term}%")
-    questions = Question.query.filter(
-        questions_like
-    ).filter_by(
-        category=category_id
-    ).all()
+    
+    # if category is not None, then get the id
+    if current_category != None:
+        questions = Question.query.filter_by(
+            category=current_category
+        ).filter(
+            questions_like
+        ).all()
+    else:
+        questions = Question.query.filter(
+            questions_like
+        ).all()
+
+    
 
     questions_formatted = [
         Question.format(question)
@@ -163,9 +181,14 @@ def quizzes():
         json: question object
     """
     data = json.loads(request.data)
+    quiz_category = data.get("quiz_category")
 
-    category_id = data["quiz_category"]["id"]
-    category_type = data["quiz_category"]["type"]
+    if  quiz_category == None or data.get("previous_questions") == None:
+        print("Wrong data format. 'quiz_category' objet must be specified!")
+        abort(400)
+    else:
+        category_id = data["quiz_category"]["id"]
+        category_type = data["quiz_category"]["type"]
     previous_question_ids = data["previous_questions"]
 
     # get the questions by category
@@ -190,7 +213,7 @@ def quizzes():
 
     # if the category does not contain any question
     else:
-        return "This category does not have any question."
+        return "This category does not have any question.", 404
 
     return jsonify({
         "question": random_question
