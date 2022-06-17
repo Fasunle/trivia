@@ -252,7 +252,28 @@ class TriviaTestCase(unittest.TestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(result.keys()), ["question"])
+
+    def test_quizzes_if_not_formatted_well(self):
+        """If data is not formatted as below, this test ensures that the format is adhere to.
         
+            payload = {
+                "previous_questions": [],
+                "quiz_category": {
+                    "id": 1,
+                    "type": "Science"
+                }
+            }
+        """
+
+        payload = {
+            "previous_questions": [],
+        }
+        response = self.client.post('/api/quizzes', data=json.dumps(payload))
+
+        # result = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 400)
+        # self.assertEqual(list(result.keys()), ["question"])
         
 # Make the tests conveniently executable
 if __name__ == "__main__":
