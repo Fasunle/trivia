@@ -270,10 +270,7 @@ class TriviaTestCase(unittest.TestCase):
         }
         response = self.client.post('/api/quizzes', data=json.dumps(payload))
 
-        # result = json.loads(response.data)
-
         self.assertEqual(response.status_code, 400)
-        # self.assertEqual(list(result.keys()), ["question"])
         
 # Make the tests conveniently executable
 if __name__ == "__main__":
