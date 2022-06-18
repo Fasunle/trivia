@@ -7,7 +7,7 @@ from flask import (
 
 from config import (
     ERROR_OUT,
-    MAX_QUESTIONS_PER_PAGE
+    MAX_QUESTIONS_PER_PAGE,
     QUESTIONS_PER_PAGE,
 )
 from flaskr.controllers import (
