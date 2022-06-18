@@ -1,14 +1,14 @@
 import json
 from flask import (
     abort,
-    request,
-    jsonify
+    jsonify,
+    request
 )
 
 from config import (
-    QUESTIONS_PER_PAGE,
     ERROR_OUT,
     MAX_QUESTIONS_PER_PAGE
+    QUESTIONS_PER_PAGE,
 )
 from flaskr.controllers import (
     get_random_integer,
