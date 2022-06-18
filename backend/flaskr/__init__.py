@@ -1,18 +1,31 @@
-import os
-from flask import Flask, request, abort, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS, decorator
+from dotenv import load_dotenv
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-from config import *
-from models import setup_db, Question, Category
+from config import (
+    ALLOWED_LIST,
+    SQLALCHEMY_DATABASE_URI,
+    SQLALCHEMY_TRACK_MODIFICATIONS
+)
 from flaskr.controllers.question import question_controller
 from flaskr.controllers.category import categories_controller
+from models import setup_db
 
+# load environment variables
+load_dotenv(".env")
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
-    setup_db(app, SQLALCHEMY_DATABASE_URI)
+    
+    # configurations
+    app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
+    
+    # database entrypoint
+    setup_db(app)
+    
+    # routes
     app.register_blueprint(question_controller, url_prefix='/api/')
     app.register_blueprint(categories_controller, url_prefix='/api/')
 
@@ -27,7 +40,7 @@ def create_app(test_config=None):
     @app.after_request
     def set_access_controls(response):
 
-        if request.origin in ALLOWED_LIST:
+        if str(request.origin) in ALLOWED_LIST:
 
             response.headers.add('Access-Control-Allow-Origin',
                                  request.origin)
