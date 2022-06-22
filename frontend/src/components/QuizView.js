@@ -72,8 +72,9 @@ class QuizView extends Component {
         return;
       },
       error: (error) => {
-        alert("Unable to load question. Please try your request again");
-        window.location = "/play"; // reload page if error occured
+        if (error.status === 404) {
+          this.setState({ forceEnd: error.status === 404 ? true : false });
+        }
         return;
       },
     });
