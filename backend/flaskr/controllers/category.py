@@ -77,3 +77,19 @@ def create_category():
         # category = Category(category_type).insert()
         return "Category Created Successfully", 200
     
+    
+@categories_controller.route("/categories/<int:id>", methods=["DELETE"])
+def delete_category(id):
+    '''Delete a category'''
+    
+    # find if the category exist
+    category = Category.query.get(id)
+    
+    # if exists, delete
+    if category is not None:
+        Category.delete(category)
+        return "Category with id: {id} was deleted!", 200
+    
+    # else, return a message
+    else:
+        return "Category with id: {id} does not exist", 400
