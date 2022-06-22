@@ -129,6 +129,34 @@ You will need to provide detailed documentation of your API endpoints including 
   Returns:
       string: id of the deleted question if the deletion was successful. Otherwise, failure message is returned
 
+
+`POST '/api/v1/questions'`
+
+- Create a question if `request.data` dictionary have the following fields:
+
+  - 'question'
+  - 'difficulty'
+  - 'category'
+  - 'answer'
+
+  Returns:
+      string: Success message
+
+- search for a question if `request.data` dictionary have the field:
+
+- 'searchTerm'
+
+  Returns:
+
+  ```python
+    {
+      "questions": [],    # a list of questions
+      "current_category": 2,      # category id of integer type
+      "categories": format_categories,  # category object with id and type keys
+      "total_questions": questions.total  # total questions in the current category
+    }
+  ```
+
 ## Testing
 
 Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
