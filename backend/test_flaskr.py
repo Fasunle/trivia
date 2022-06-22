@@ -95,6 +95,31 @@ class TriviaTestCase(unittest.TestCase):
         
         self.assertEqual(response.status_code, 404)
         self.assertEqual(res_data["message"], "resource not found")
+        
+        
+    def test_create_category(self):
+        '''Create a new Category'''
+
+        success_response_mock = "Category Created Successfully"
+        failure_response_mock = "Category already exists!"
+        payload = {
+            'category': 'Marketing',
+        }
+
+        response = self.client.post('/api/categories', data=json.dumps(payload))
+
+        # if category has been created already
+        if response.status_code == 404:
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(json.loads(response.data), failure_response_mock)
+            self.assertNotEqual(json.loads(response.data), "")
+        
+        # if category has not been created before
+        elif response.status_code == 200:
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(json.loads(response.data), success_response_mock)
+            self.assertNotEqual(json.loads(response.data), "")
+            
 
     def test_fetch_questions(self):
         """Get all questions and test that correct keys are returned for a given page
