@@ -121,7 +121,7 @@ You will need to provide detailed documentation of your API endpoints including 
 
 `DELETE '/api/v1/questions/<int:id>'`
 
-Given a question id, delete the question
+- Given a question id, delete the question
 
   Args:
       id (int): unique identifier of the question
