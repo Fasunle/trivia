@@ -119,6 +119,16 @@ You will need to provide detailed documentation of your API endpoints including 
   ```
 
 
+`DELETE '/api/v1/questions/<int:id>'`
+
+Given a question id, delete the question
+
+  Args:
+      id (int): unique identifier of the question
+
+  Returns:
+      string: id of the deleted question if the deletion was successful. Otherwise, failure message is returned
+
 ## Testing
 
 Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
