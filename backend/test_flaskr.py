@@ -119,7 +119,28 @@ class TriviaTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(json.loads(response.data), success_response_mock)
             self.assertNotEqual(json.loads(response.data), "")
-            
+    
+    
+    def test_delete_category(self):
+        '''Delete a category'''    
+
+        # get any random category
+        category = Category.query.first()
+        
+        if category is None:
+            return
+        
+        # delete the category
+        response = self.client.delete(f"/api/categories/{category.id}")
+        
+        # check if the deletion was successful
+        self.assertEqual(response.status_code, 200)
+        
+        # find the deleted category
+        category = Category.query.get(category.id)
+        
+        # the category should be None already
+        self.assertIsNone(category)
 
     def test_fetch_questions(self):
         """Get all questions and test that correct keys are returned for a given page
