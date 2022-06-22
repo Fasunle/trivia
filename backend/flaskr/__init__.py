@@ -1,11 +1,13 @@
+
+
+
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from config import (
     ALLOWED_LIST,
-    SQLALCHEMY_DATABASE_URI,
-    SQLALCHEMY_TRACK_MODIFICATIONS
+    SQLALCHEMY_DATABASE_URI
 )
 from flaskr.controllers.question import question_controller
 from flaskr.controllers.category import categories_controller
@@ -18,12 +20,8 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     
-    # configurations
-    app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
-    
     # database entrypoint
-    setup_db(app)
+    setup_db(app, SQLALCHEMY_DATABASE_URI)
     
     # routes
     app.register_blueprint(question_controller, url_prefix='/api/')
