@@ -82,6 +82,23 @@ You will need to provide detailed documentation of your API endpoints including 
 }
 ```
 
+`GET '/api/v1.0/categories/<int:id>/questions'`
+
+- Fetches all questions in a specific category
+
+- Request Arguments: category id integer e.g 1
+
+- Returns: An object with the following format:
+
+  ```python
+
+    {
+        "questions": questions,    # list of questions
+        "current_category": current_category, # category string e.g 'Arts'
+        "total_questions": total_questions    # total question count
+    }
+  ```
+
 ## Testing
 
 Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
