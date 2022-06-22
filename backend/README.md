@@ -82,6 +82,118 @@ You will need to provide detailed documentation of your API endpoints including 
 }
 ```
 
+`GET '/api/v1.0/categories/<int:id>/questions'`
+
+- Fetches all questions in a specific category
+
+- Request Arguments: category id integer e.g 1
+
+- Returns: An object with the following format:
+
+  ```python
+
+    {
+        "questions": questions,    # list of questions
+        "current_category": current_category, # category string e.g 'Arts'
+        "total_questions": total_questions    # total question count
+    }
+  ```
+
+`GET '/api/v1/questions'`
+
+- Fetch Questions from the database and automatically paginate them.
+
+- return 10 questions per page
+
+- Request Arguments: None
+
+- Returns:
+
+  ```python
+    {
+      "questions": [],    # a list of questions
+      "current_category": 2,      # category id of integer type
+      "categories": format_categories,  # category object with id and type keys
+      "total_questions": questions.total  # total questions in the current category
+    }
+  ```
+
+
+`DELETE '/api/v1/questions/<int:id>'`
+
+- Given a question id, delete the question
+
+  Args:
+      id (int): unique identifier of the question
+
+  Returns:
+      string: id of the deleted question if the deletion was successful. Otherwise, failure message is returned
+
+`POST '/api/v1/questions'`
+
+- Create a question if `request.data` dictionary have the following fields:
+
+  - 'question'
+  - 'difficulty'
+  - 'category'
+  - 'answer'
+
+  i.e request body must be sent with the above payload
+
+  Returns:
+      string: Success message
+
+- search for a question if `request.data` dictionary have the field:
+
+- 'searchTerm'
+
+  i.e request body must be sent with the above payload
+
+  Returns:
+
+  ```python
+    {
+      "questions": [],    # a list of questions
+      "current_category": 2,      # category id of integer type
+      "categories": format_categories,  # category object with id and type keys
+      "total_questions": questions.total  # total questions in the current category
+    }
+  ```
+
+`POST 'api/v1/quizzes'`
+
+- Generate a random question.
+
+- when the questions list is exhusted, it would return a 404 message
+
+  - message: "This category does not have any question."
+
+- Arguments:
+
+  ```python
+  {
+    "previous_questions": [],
+    "quiz_category": {
+      "id": "1",
+      "type": "Arts"
+    }
+  }
+  ```
+
+- Returns:
+  - json: question object
+
+    ```python
+
+    {
+        'id': 1,
+        'question': "What is your name?",
+        'answer': "Kehinde Fasunle",
+        'category': "Arts",
+        'difficulty': 3
+    }
+    ```
+
 ## Testing
 
 Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
