@@ -139,12 +139,16 @@ You will need to provide detailed documentation of your API endpoints including 
   - 'category'
   - 'answer'
 
+  i.e request body must be sent with the above payload
+
   Returns:
       string: Success message
 
 - search for a question if `request.data` dictionary have the field:
 
 - 'searchTerm'
+
+  i.e request body must be sent with the above payload
 
   Returns:
 
