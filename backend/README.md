@@ -129,7 +129,6 @@ You will need to provide detailed documentation of your API endpoints including 
   Returns:
       string: id of the deleted question if the deletion was successful. Otherwise, failure message is returned
 
-
 `POST '/api/v1/questions'`
 
 - Create a question if `request.data` dictionary have the following fields:
@@ -160,6 +159,40 @@ You will need to provide detailed documentation of your API endpoints including 
       "total_questions": questions.total  # total questions in the current category
     }
   ```
+
+`POST 'api/v1/quizzes'`
+
+- Generate a random question.
+
+- when the questions list is exhusted, it would return a 404 message
+
+  - message: "This category does not have any question."
+
+- Arguments:
+
+  ```python
+  {
+    "previous_questions": [],
+    "quiz_category": {
+      "id": "1",
+      "type": "Arts"
+    }
+  }
+  ```
+
+- Returns:
+  - json: question object
+
+    ```python
+
+    {
+        'id': 1,
+        'question': "What is your name?",
+        'answer': "Kehinde Fasunle",
+        'category': "Arts",
+        'difficulty': 3
+    }
+    ```
 
 ## Testing
 
