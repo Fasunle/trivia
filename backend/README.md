@@ -99,6 +99,26 @@ You will need to provide detailed documentation of your API endpoints including 
     }
   ```
 
+`GET '/api/v1/questions'`
+
+- Fetch Questions from the database and automatically paginate them.
+
+- return 10 questions per page
+
+- Request Arguments: None
+
+- Returns:
+
+  ```python
+    {
+      "questions": [],    # a list of questions
+      "current_category": 2,      # category id of integer type
+      "categories": format_categories,  # category object with id and type keys
+      "total_questions": questions.total  # total questions in the current category
+    }
+  ```
+
+
 ## Testing
 
 Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
