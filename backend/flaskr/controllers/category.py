@@ -1,4 +1,5 @@
-from flask import jsonify
+from json import dumps, loads
+from flask import jsonify, request
 
 from flaskr.controllers import categories_controller
 from models import Category
@@ -57,3 +58,22 @@ def get_by_category(id):
         "total_questions": total_questions
     }
     return jsonify(result)
+
+
+@categories_controller.route("/categories", methods=["POST"])
+def create_category():
+    '''Create a new Category if not already present'''
+    
+    # parse data
+    data = loads(request.data)
+    category_type = data.get("category")
+    
+    # check if the category doesn't already exist
+    check = Category.query.filter_by(type=category_type).all()
+    
+    if check is not []:
+        return "Category already exists!", 400
+    else:
+        # category = Category(category_type).insert()
+        return "Category Created Successfully", 200
+    
