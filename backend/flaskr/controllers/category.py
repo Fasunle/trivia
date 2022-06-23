@@ -113,8 +113,8 @@ def delete_category(id):
     # if exists, delete
     if category is not None:
         Category.delete(category)
-        return "Category with id: {id} was deleted!", 200
+        return f"Category with id: {id} was deleted!", 200
     
     # else, return a message
     else:
-        return "Category with id: {id} does not exist", 400
+        return f"Category with id: {id} does not exist", 400
