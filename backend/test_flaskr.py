@@ -47,45 +47,24 @@ class TriviaTestCase(unittest.TestCase):
         response = self.client.get("/api/categories")
         categories = json.loads(response.data)
 
-        expected = {
-                    'categories': {
-                        '1': 'Science',
-                        '2': 'Art',
-                        '3': 'Geography',
-                        '4': 'History',
-                        '5': 'Entertainment',
-                        '6': 'Sports'
-                        }
-                    }
-
         self.assertEqual(response.status_code, 200)
-        self.assertDictEqual(categories, expected)
         self.assertListEqual(list(categories.keys()), ["categories"])
 
     def test_get_by_category(self):
         """Get questions by category
         """
         
-        science_mock_id = 1
-        geography_mock_id = 3
+        category_res = Category.query.first()
+        mock_id = category_res.id
         
-        science_response = self.client.get(f"/api/categories/{science_mock_id}/questions")
-        geography_response = self.client.get(f"/api/categories/{geography_mock_id}/questions")
+        response = self.client.get(f"/api/categories/{mock_id}/questions")
         
-        science_category = json.loads(science_response.data)
-        geography_category = json.loads(geography_response.data)
+        questions = json.loads(response.data)
 
-        # science test
-        self.assertEqual(science_category["current_category"], "Science")
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(
-            science_category["questions"], list)
-        self.assertNotEqual(science_category["current_category"], "Geography")
-        
-        # geography test
-        self.assertIsInstance(
-            geography_category["questions"], list)
-        self.assertEqual(
-            geography_category["current_category"], "Geography")
+            questions["questions"], list)
+
     
     def test_get_by_category_if_no_categoryId(self):
         """if no category id is specified, 
