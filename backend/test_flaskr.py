@@ -1,3 +1,4 @@
+from unicodedata import category
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
@@ -119,7 +120,49 @@ class TriviaTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(json.loads(response.data), success_response_mock)
             self.assertNotEqual(json.loads(response.data), "")
+            
     
+    def test_update_category(self):
+        '''Update a category'''
+        
+        # new type
+        payload = {
+            'type': 'Arts',
+            "id": 2
+        }
+        
+        success_response_mock = "Category Updated Successfully"
+        failure_response_mock = "Category does not exist"
+        wrong_data_response_mock  = "Category type is required"
+
+        # get a random category
+        category = Category.query.first()
+        
+        # make a PUT request
+        response = self.client.put(f'/api/categories/{category.id}', data=json.dumps(payload))
+
+        # response info
+        status_code = response.status_code
+        response_data = response.data.decode('utf-8')
+
+        # if category cannot be updated!
+        if status_code == 404:
+            self.assertEqual(response_data, failure_response_mock)
+            self.assertEqual(status_code, 404)
+            self.assertNotEqual(response_data, "")
+            
+        # bad payload, client should send correct data to update
+        elif status_code == 400:
+            self.assertEqual(status_code, 400)
+            self.assertEqual(response_data, wrong_data_response_mock)
+            self.assertNotEqual(response_data, "")
+        
+        # if category has not been created before
+        else:
+            self.assertEqual(status_code, 200)
+            self.assertEqual(response_data, success_response_mock)
+            self.assertNotEqual(response_data, "")
+        
     
     def test_delete_category(self):
         '''Delete a category'''    
