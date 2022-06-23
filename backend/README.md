@@ -82,6 +82,31 @@ You will need to provide detailed documentation of your API endpoints including 
 }
 ```
 
+`POST '/api/v1/categories'`
+
+- Create a new Category if not already present
+
+- Argument:
+
+  - payload
+
+  ```python
+
+    payload = {
+      'category': "Politics"
+    }
+  ```
+
+- Returns: message, status_code e.g "Category Created Successfully", 200
+
+`DELETE '/api/v1/categories/<int:id>'`
+
+- Delete a category if present
+
+- Argument: category id
+
+Returns: message, status_code e.g "Category deleted Successfully", 200
+
 `GET '/api/v1.0/categories/<int:id>/questions'`
 
 - Fetches all questions in a specific category
