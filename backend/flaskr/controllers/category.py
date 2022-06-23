@@ -76,6 +76,31 @@ def create_category():
     else:
         # category = Category(category_type).insert()
         return "Category Created Successfully", 200
+
+
+@categories_controller.route("/categories/<int:id>", methods=["PUT"])    
+def update_category(id):
+    '''Update a category'''
+
+    data = loads(request.data)
+    category_type = data.get("type")
+
+    if category_type is None:
+        return "Category type is required", 400
+    
+    # find the category
+    category = Category.query.get(id)
+
+    if category is None:
+        return "Category does not exist", 404
+    
+    # update the category
+    new_category = Category(category_type)
+    new_category.id = id
+    new_category.update()
+    
+    return "Category Updated Successfully", 200
+    
     
     
 @categories_controller.route("/categories/<int:id>", methods=["DELETE"])
