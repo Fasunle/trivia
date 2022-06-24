@@ -41,7 +41,10 @@ def fetch_questions():
     """
     # get page number
     page_number = request.args.get("page", 1, int)
-    current_category = request.args.get("current_category", 1, int)
+    current_category = request.args.get("current_category")
+
+    if current_category == 'null':
+        current_category = None
 
     # flask_sqlalchemy.BaseQuery.paginate
     # https: // flask-sqlalchemy.palletsprojects.com/en/2.x/api /?highlight = basequery
@@ -135,7 +138,13 @@ def create_question():
 
 def search_question(search_term, current_category):
     # get the category
-    # category = Category.query.get(current_category)
+    
+    category_id = None
+
+    if current_category == 'null':
+        current_category = None
+    else:
+        category_id = Category.query.filter_by(type=current_category).first().id
     
     # return empty if the category is not found
     if search_term is None:
@@ -151,7 +160,7 @@ def search_question(search_term, current_category):
     # if category is not None, then get the id
     if current_category != None:
         questions = Question.query.filter_by(
-            category=current_category
+            category=category_id
         ).filter(
             questions_like
         ).all()
