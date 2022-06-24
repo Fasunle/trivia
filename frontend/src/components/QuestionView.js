@@ -21,10 +21,8 @@ class QuestionView extends Component {
   }
 
   getQuestions = () => {
-    // fetch category '1' by default
-    const current_category = this.state.currentCategory || 1;
     $.ajax({
-      url: `/api/questions?page=${this.state.page}&current_category=${current_category}`,
+      url: `/api/questions?page=${this.state.page}`,
       type: "GET",
       success: (result) => {
         this.setState({
