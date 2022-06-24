@@ -88,14 +88,17 @@ class TriviaTestCase(unittest.TestCase):
         response = self.client.post('/api/categories', data=json.dumps(payload))
 
         # if category has been created already
-        if response.status_code == 404:
-            self.assertEqual(response.status_code, 404)
-            self.assertEqual(json.loads(response.data), failure_response_mock)
-            self.assertNotEqual(json.loads(response.data), "")
+        if response.status_code == 400:
+            # parse byte data to string
+            res_data = response.data.decode('utf-8')
+
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(res_data, failure_response_mock)
+            self.assertNotEqual(res_data, "")
         
         # if category has not been created before
         elif response.status_code == 200:
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 2900)
             self.assertEqual(json.loads(response.data), success_response_mock)
             self.assertNotEqual(json.loads(response.data), "")
             
@@ -174,8 +177,8 @@ class TriviaTestCase(unittest.TestCase):
         result_keys = list(questions.keys())
 
         self.assertEqual(response.status_code, 200)
-        # by default, category type is 1
-        self.assertEqual(questions["current_category"], 1)
+        # by default, category type is None
+        self.assertIsNone(questions["current_category"])
         
         # return proper data format
         self.assertListEqual(result_keys, expected_keys)
@@ -190,11 +193,13 @@ class TriviaTestCase(unittest.TestCase):
         """
         response = self.client.get('/api/questions?page=2&current_category=2')
         questions = json.loads(response.data)
+
+        current_category = int(questions["current_category"])
         
         self.assertEqual(response.status_code, 200)
         # returns a current_category id
-        self.assertEqual(questions["current_category"], 2)
-        self.assertNotEqual(questions["current_category"], 1)
+        self.assertEqual(current_category, 2)
+        self.assertNotEqual(current_category, 1)
         # returns a list
         self.assertIsInstance(questions["questions"], list)
         self.assertNotIsInstance(questions["questions"], tuple)
@@ -284,7 +289,7 @@ class TriviaTestCase(unittest.TestCase):
             "searchTerm": "What"
         }
 
-        response = self.client.post('/api/questions', data=json.dumps(payload))
+        response = self.client.post('/api/questions?current_category=null', data=json.dumps(payload))
         questions = json.loads(response.data)
         
         self.assertEqual(response.status_code, 200)
@@ -302,7 +307,7 @@ class TriviaTestCase(unittest.TestCase):
             "searchTerm": "What"
         }
 
-        response = self.client.post('/api/questions?current_category=2', data=json.dumps(payload))
+        response = self.client.get('/api/questions?current_category=2', data=json.dumps(payload))
         questions = json.loads(response.data)
         
         self.assertEqual(response.status_code, 200)
