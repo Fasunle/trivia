@@ -13,4 +13,4 @@ psycopg2==2.9.3
 pytz==2022.1
 six==1.16.0
 SQLAlchemy==1.4.36
-Werkzeug==2.1.2
+Werkzeug==2.2.3
